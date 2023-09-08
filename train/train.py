@@ -97,9 +97,14 @@ def train_LR(df):
     x_train, x_test, y_train, y_test = train_data(df)
     # perform regression
     lr = LinearRegression()
-    lr.fit(x_train, y_train)  
+    lr.fit(x_train, y_train)
+
         # print(lr.coef_)  
         # print(lr.intercept_) 
+    coeffcients = pd.DataFrame([x_train.columns, lr.coef_]).T
+    coeffcients = coeffcients.rename(columns={0: 'Attribute', 1: 'Coefficients'})
+    print(coeffcients)
+
     y_pred = lr.predict(x_test)
     # output result
     train_result(y_test, y_pred)

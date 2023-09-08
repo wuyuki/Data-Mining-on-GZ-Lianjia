@@ -238,7 +238,7 @@ def encode_decoration(df):
     return df
 ```
 
-## 数据建模与调优 
+## 线性模型与调优 
 
 #### 数据建模
 
