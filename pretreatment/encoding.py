@@ -12,7 +12,7 @@ def encode_floor(df):
     dummies = pd.get_dummies(df['floor'])
     tmp = pd.concat([df, dummies], axis=1)
     del tmp['floor']
-    tmp.rename(columns={'低楼层': 'low', '中楼层': 'medium', '高楼层': 'high'}, inplace=True)
+    tmp.rename(columns={'低': 'low', '中': 'medium', '高': 'high'}, inplace=True)
     df = tmp
     return df
 

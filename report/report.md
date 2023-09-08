@@ -242,69 +242,83 @@ def encode_decoration(df):
 
 #### 数据建模
 
-在数据建模上，我们选择 sklearn 库中的 LinearRegression 线性回归模型进行建模。
+在数据建模上，我们选择 sklearn 库中的 LinearRegression 线性回归模型进行建模。我们将选择 2023 年 9 月的二手房数据作为一个数据集进行分析。
 
 ```python
-def train(df):
-    df.drop(df.tail(1).index, inplace=True)
-    y = df['total_price']
-    del df['total_price']
-    x = df
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=1)
+def train_LR(df):
+    x_train, x_test, y_train, y_test = train_data(df)
+    # perform regression
     lr = LinearRegression()
     lr.fit(x_train, y_train)  
+        # print(lr.coef_)  
+        # print(lr.intercept_) 
     y_pred = lr.predict(x_test)
-    ...
+    # output result
+    train_result(y_test, y_pred)
+    # output plot
+    train_plot(y_test, y_pred)
 ```
 
 #### 模型调优
 
 初次对模型进行训练，得到结果如下：
 
-<img src="img/pretreatment/building.png" width = "400"/>
+<img src="img/train/unitprice1_1.png" width = "400"/>
 
-<img src="img/train/train1_2.png" width = "400"/>
+<img src="img/train/unitprice1_2.png" width = "400"/>
+
+<img src="img/train/unitprice1_3.png" width = "400"/>
+
+<img src="img/train/unitprice1_4.png" width = "400"/>
 
 ```
-MSE: 20960.956934563896
-RMSE: 144.7789934160474
-Rsquare: 0.8491457316596066
+MSE: 225870504.76260704
+RMSE: 15028.988813709559
+Rsquare: 0.5727435699161345
+Adj_Rsquare: 15923.9926363655
 ```
 
-通过图像可以看出，在尾部有很多偏离回归的噪点，主要集中在 total_price > 3000 的范围内。这些噪点影响了模型的准确性。为了提高模型的准确性，我们可以剔除噪点, 筛去总价过高的二手房。最后经过统计分析，我们选择筛去总价大于 3000 万的二手房，而这部分数据占总体数据量约为 0.2%。
+通过图像可以看出，在尾部有很多偏离回归的噪点，主要集中在均价大于 150000 的范围内。这些噪点影响了模型的准确性。为了提高模型的准确性，我们可以剔除噪点, 筛去总价过高的二手房。最后经过统计分析，我们选择筛去均价均价大于 150000 的二手房，而这部分数据占总体数据量约为 0.8%。
 
 ```python
-# delete rows where total_price > 3000
-# print(len(df[df['total_price'] <= 3000]))
-# print(len(df[df['total_price'] > 3000]))
-# print(len(df[df['total_price'] > 3000])/len(df[df['total_price'] <= 3000]))
-df = df[df['total_price'] <= 3000]
+print(len(df[df['unit_price'] > 150000])/len(df['unit_price']))
+df = df[df['unit_price'] <= 150000]
 ```
 
 删去数据后再次对模型进行训练，得到结果如下：
 
-<img src="img/train/train2_1.png" width = "400"/>
+<img src="img/train/unitprice2_1.png" width = "400"/>
 
-<img src="img/train/train2_2.png" width = "400"/>
+<img src="img/train/unitprice2_2.png" width = "400"/>
+
+<img src="img/train/unitprice2_3.png" width = "400"/>
+
+<img src="img/train/unitprice2_4.png" width = "400"/>
 
 ```
-MSE: 9618.32075785082
-RMSE: 98.07303787408047
-Rsquare: 0.8908447400546863
+MSE: 151610794.49443346
+RMSE: 12313.033521209689
+Rsquare: 0.6140889886464301
+Adj_Rsquare: 14261.95551355982
 ```
 
-此时，得出的结果拟合程度仍然不够好。于是对数据列 total_price 进行平滑处理，减少噪声对模型的影响。平滑处理后，得到的结果如下：
+此时，得出的结果相较于初始拟合已经有了很明显的优化，但是拟合程度仍然不够好。于是对数据列 unit_price 进行平滑处理，减少噪声对模型的影响。平滑处理后，得到的结果如下：
 
-<img src="img/train/train3_1.png" width = "400"/>
+<img src="img/train/unitprice3_1.png" width = "400"/>
 
-<img src="img/train/train3_2.png" width = "400"/>
+<img src="img/train/unitprice3_2.png" width = "400"/>
+
+<img src="img/train/unitprice3_3.png" width = "400"/>
+
+<img src="img/train/unitprice3_4.png" width = "400"/>
 
 此时，模型的拟合程度较调优指出得到了很大的提升：
 
 ```
-MSE: 0.0419107161380322
-RMSE: 0.2047210691111987
-Rsquare: 0.9129220157462808
+MSE: 0.09430100166553648
+RMSE: 0.30708468158723984
+Rsquare: 0.7044386643501697
+Adj_Rsquare: 10923.17359760383
 ```
 
 ## 备注

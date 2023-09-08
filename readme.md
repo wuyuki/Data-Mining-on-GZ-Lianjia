@@ -34,7 +34,7 @@ base
 └─report
    │ report.md              // 项目报告
    │  
-   └─static                  // 报告静态文件
+   └─ img                    // 报告静态图片
 ```
 
 ## 启动方法
